@@ -1,4 +1,5 @@
 import pandas as pd
+import csv
 from sklearn.preprocessing import StandardScaler
 from pca import run_pca
 from knn import run_knn
@@ -9,8 +10,8 @@ def fill_nan(df_movie, col):
     df_movie[col] = df_movie[col].fillna(df_movie[col].median())
 
 def data_prepocessing():
-    df = pd.read_csv('../data/imdb.csv', error_bad_lines=False)
-    df = df[df['year'] > 2000]
+    df = pd.read_csv('../data/imdb.csv', error_bad_lines= False , quoting=csv.QUOTE_MINIMAL)
+    #df = df[df['year'] > 2000]
     df_movie = df[df['type'] != 'video.episode']
 
     cols = list(df_movie.columns)
@@ -41,9 +42,7 @@ if __name__ == '__main__':
 
     df_knn = df_movie
     df_knn["class"] = df_knn.apply(classify, axis=1)
-    #run_knn(df_knn)
+    run_knn(df_knn)
 
     #run_logistic_regression()
     run_random_forest(df_knn)
-    #run_xgboost_cornell()
-    #run_xgboost_imdb(df_knn)
