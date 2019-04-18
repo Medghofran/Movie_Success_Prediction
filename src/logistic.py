@@ -1,17 +1,15 @@
 from sklearn.utils import shuffle
 from sklearn.linear_model import LogisticRegression
 import numpy as np
+from split_dataset import split_train_test
 
-def run_logistic_regression():
-    print("\n\n----------------------Logistic Regression----------------------\n\n")
-    x = np.loadtxt("../data/cornell/X_train.txt")
-    y = np.loadtxt("../data/cornell/y_train.txt", dtype = int)
+def run_logistic_regression(df_knn):
 
-    x_new, y_new = shuffle(x, y)
-    x_train = x_new[:1000]
-    y_train = y_new[:1000]
-    x_test = x_new[1000:]
-    y_test = y_new[1000:]
+    y = np.array(df_knn["class"])
+    x = np.array(df_knn.drop(columns="class"))
+
+    x_train, x_test, y_train, y_test = split_train_test(x, y)
+
 
     logistic = LogisticRegression()
     logistic.fit(x_train,y_train)
