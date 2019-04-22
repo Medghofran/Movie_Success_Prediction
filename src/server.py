@@ -102,7 +102,7 @@ async def handle(request):
     movie_data.append(int(request_body['photos']))
     movie_data.append(len(request_body['genres']))
     
-    for i in range(0, 28):
+    for i in range(0, 27):
         movie_data.append(0)
     
     for i in request_body['genres']:

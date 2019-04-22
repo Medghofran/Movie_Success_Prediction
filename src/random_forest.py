@@ -20,12 +20,34 @@ def run_random_forest(df_knn):
     rf.fit(x_train, y_train)
     pred = rf.predict(x_test)
     test_pred = rf.predict(x_train)
-
-    test_frame = x_train[1]
-    pred_frame = rf.predict(np.reshape(test_frame, (1, -1)))
+    
+    success_indices = np.where(y_train==2)[0]
+    test_frame = x_train[success_indices]
+    print("location index:", success_indices)
+    tst_y = y_train[success_indices]
+    pred_frame = rf.predict(test_frame)
     print(
-        "\n\n----------------------Pred Frame----------------------\n\n",
-        pred_frame
+        "\n\n----------------------Pred success----------------------\n\n",
+        accuracy_score(tst_y, pred_frame)
+    )
+    
+
+    failure_indices = np.where(y_train==1)[0]
+    test_frame = x_train[failure_indices]
+    tst_y = y_train[failure_indices]
+    pred_frame = rf.predict(test_frame)
+    print(
+        "\n\n----------------------Pred Failure----------------------\n\n",
+        accuracy_score(tst_y, pred_frame)
+    )
+    
+    good_indices = np.where(y_train==1)[0]
+    test_frame = x_train[good_indices]
+    tst_y = y_train[good_indices]
+    pred_frame = rf.predict(test_frame)
+    print(
+        "\n\n----------------------Pred good----------------------\n\n",
+        accuracy_score(tst_y, pred_frame)
     )
     
     # print the Training Accuracy
@@ -34,7 +56,7 @@ def run_random_forest(df_knn):
         accuracy_score(y_train, test_pred),
     )
     print(
-        "\n\n----------------------Training Set Accuracy----------------------\n\n",
+        "\n\n----------------------Testing Set Accuracy----------------------\n\n",
         accuracy_score(y_test, pred),
     )
 
