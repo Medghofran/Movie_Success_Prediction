@@ -177,11 +177,10 @@ if __name__ == "__main__":
     #     amazing = classes==['AMAZING']
     #     print(amazing)
     #     df_knn = df_knn.drop(columns="imdbRating")
-    #    # run_knn(df_knn)
 
     df_movie = load_metadata_dataset()
+    run_knn(df_movie)
     # run_logistic_regression(df_movie)
-
     classifier = run_random_forest(df_movie)
     run(classifier)
 
