@@ -3,6 +3,11 @@ import json
 import numpy as np
 
 _classifier = None
+_directors = []
+_actors = []
+_countries = []
+_languages = []
+_content_rating = []
 
 
 def predict(data):
@@ -92,25 +97,106 @@ def predict(data):
     return td
 
 
+async def handle_directors(request):
+    # return the encoded director names
+    return web.json_response(_directors, status=200)
+
+
+async def handle_actors(request):
+    # return the encoded director names
+    return web.json_response(_actors, status=200)
+
+
+async def handle_countries(request):
+    # return the encoded director names
+    return web.json_response(_countries, status=200)
+
+
+async def handle_languages(request):
+    # return the encoded director names
+    return web.json_response(_languages, status=200)
+
+
+async def handle_content_rating(request):
+    # return the encoded director names
+    return web.json_response(_content_rating, status=200)
+
+
 async def handle(request):
     request = await request.text()
     print(request)
     request_body = json.loads(request)
     movie_data = []
-    movie_data.append(int(request_body['wins']))
-    movie_data.append(int(request_body['reviews']))
-    movie_data.append(int(request_body['photos']))
-    movie_data.append(len(request_body['genres']))
-    
+    movie_data.append(int(request_body["wins"]))
+    movie_data.append(int(request_body["reviews"]))
+    movie_data.append(int(request_body["photos"]))
+    movie_data.append(len(request_body["genres"]))
+
     for i in range(0, 27):
         movie_data.append(0)
-    
-    for i in request_body['genres']:
+
+    for i in request_body["genres"]:
         movie_data[int(i) + 4] = 1
-    
+
     print(movie_data)
     response = predict(movie_data)
     return web.json_response(response.tolist(), status=200)
+
+
+def set_directors(dircetor_names, director_codes):
+
+    for i in range(0, len(dircetor_names)):
+        director = {}
+        director["id"] = int(director_codes[i])
+        director["text"] = str(dircetor_names[i])
+        global _directors
+
+        if director not in _directors:
+            _directors.append(director)
+
+
+def set_actors(actor_names, actor_codes):
+    for i in range(0, len(actor_names)):
+        actor = {}
+        actor["id"] = int(actor_codes[i])
+        actor["text"] = str(actor_names[i])
+        global _actors
+
+        if actor not in _actors:
+            _actors.append(actor)
+
+
+def set_coutries(country_names, country_codes):
+    for i in range(0, len(country_names)):
+        country = {}
+        country["id"] = int(country_codes[i])
+        country["text"] = str(country_names[i])
+        global _actors
+
+        if country not in _countries:
+            _countries.append(country)
+
+
+def set_languages(language_names, language_codes):
+    for i in range(0, len(language_names)):
+        language = {}
+        language["id"] = int(language_codes[i])
+        language["text"] = str(language_names[i])
+        global _actors
+
+        if language not in _languages:
+            _languages.append(language)
+
+
+def set_content_rating(content_ratings, rating_codes):
+    for i in range(0, len(content_ratings)):
+        content_rating = {}
+        content_rating["id"] = int(rating_codes[i])
+        content_rating["text"] = str(content_ratings[i])
+        global _actors
+
+        if content_rating not in _content_rating:
+            _content_rating.append(content_rating)
 
 
 def run(classifier):
@@ -118,4 +204,9 @@ def run(classifier):
     _classifier = classifier
     app = web.Application()
     app.router.add_post("/predict", handle)
+    app.router.add_get("/get-directors", handle_directors)
+    app.router.add_get("/get-actors", handle_actors)
+    app.router.add_get("/get-countries", handle_countries)
+    app.router.add_get("/get-languages", handle_languages)
+    app.router.add_get("/get-content-rating", handle_content_rating)
     web.run_app(app, port=8000)

@@ -5,7 +5,15 @@ from pca import run_pca
 from knn import run_knn, plot_data
 from random_forest import run_random_forest
 from logistic import run_logistic_regression
-from server import run, _classifier
+from server import (
+    run,
+    _classifier,
+    set_directors,
+    set_actors,
+    set_coutries,
+    set_languages,
+    set_content_rating,
+)
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 
@@ -102,6 +110,8 @@ def load_metadata_dataset():
     df_metadata = df_metadata.drop(columns="director_name")
     df_metadata["director_name"] = encoded_directors
 
+    set_directors(dircetor_names, encoded_directors)
+
     # use label encoding to encode first actor names
     df_metadata = fill_nan(df_metadata)
     actor_names = list(df_metadata["actor_1_name"])
@@ -111,24 +121,28 @@ def load_metadata_dataset():
     df_metadata = df_metadata.drop(columns="actor_1_name")
     df_metadata["actor_1_name"] = encoded_actor_names
 
+    set_actors(actor_names, encoded_actor_names)
+
     # label encode countries and languages and content rating as well,
     languages = list(df_metadata["language"])
     encoded_languages = le.fit_transform(languages)
 
     df_metadata = df_metadata.drop(columns="language")
     df_metadata["language"] = encoded_languages
+    set_languages(languages, encoded_languages)
 
     countries = list(df_metadata["country"])
     encoded_countries = le.fit_transform(countries)
     df_metadata = df_metadata.drop(columns="country")
     df_metadata["country"] = encoded_countries
+    set_coutries(countries, encoded_countries)
 
-
-    #do the same for the content rating
-    content_rating = list(df_metadata['content_rating'])
+    # do the same for the content rating
+    content_rating = list(df_metadata["content_rating"])
     encoded_content_rating = le.fit_transform(content_rating)
-    df_metadata = df_metadata.drop(columns='content_rating')
-    df_metadata['content_rating'] = encoded_content_rating
+    df_metadata = df_metadata.drop(columns="content_rating")
+    df_metadata["content_rating"] = encoded_content_rating
+    set_content_rating(content_rating, encoded_content_rating)
 
     # drop the rest of the movies metadata that we wont probably use.
     df_metadata = df_metadata.drop(columns="genres")
@@ -147,10 +161,8 @@ def load_metadata_dataset():
 
     print(df_movie["director_name"].head())
 
-    col_mask=print(df_movie.isna().any(axis=0))
+    col_mask = print(df_movie.isna().any(axis=0))
     print(col_mask)
-
-    # print(df_movie.index[df_movie['class'] == 1].tolist())
 
     # return the processed dataset.
     return df_movie
@@ -168,8 +180,8 @@ if __name__ == "__main__":
     #    # run_knn(df_knn)
 
     df_movie = load_metadata_dataset()
-    run_logistic_regression(df_movie)
+    # run_logistic_regression(df_movie)
 
-    # classifier = run_random_forest(df_movie)
-    # run(classifier)
+    classifier = run_random_forest(df_movie)
+    run(classifier)
 
